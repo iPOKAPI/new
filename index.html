@@ -226,6 +226,21 @@
         border-radius: 10px;
         border: 2px solid #ff6f61;
     }
+    .home-btn {
+    display: none; /* Hidden by default */
+    margin: 20px auto;
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: #ffcc00;
+    color: black;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.home-btn:hover {
+    background-color: #ffaa00;
+}
     </style>
 </head>
 <body>
@@ -234,6 +249,8 @@
         <source src="bgmusic.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
+  
+    
     <audio id="correct-sound">
         <source src="correct.mp3" type="audio/mpeg">
     </audio>
@@ -249,6 +266,19 @@
     // Ensure autoplay works across all browsers
     bgMusic.volume = 0.5; // Adjust volume (0.0 to 1.0)
 
+    // Create the Home button
+let homeButton = document.createElement("button");
+homeButton.innerText = "🏠 Home";
+homeButton.style.position = "fixed";
+homeButton.style.bottom = "70px";
+homeButton.style.right = "15px"; // Placed beside Toggle Music
+homeButton.style.padding = "10px";
+homeButton.style.background = "yellow";
+homeButton.style.border = "none";
+homeButton.style.cursor = "pointer";
+homeButton.onclick = goHome; // Ensure function exists
+
+document.body.appendChild(homeButton);
     // Add a play/pause button if needed
     let musicToggle = document.createElement("button");
     musicToggle.innerText = "🎵 Toggle Music";
@@ -262,6 +292,7 @@
     
     document.body.appendChild(musicToggle);
 
+
     musicToggle.addEventListener("click", function () {
         if (bgMusic.paused) {
             bgMusic.play();
@@ -273,6 +304,7 @@
     });
 });
     </script>
+   
     <div id="player-name-page" class="quiz-container">
         <h1>Enter Your Name</h1>
         <input type="text" id="player-name" placeholder="Your name">
