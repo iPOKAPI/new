@@ -80,7 +80,37 @@
             align-items: center;
             flex-direction: column;
         }
+ /* Floating Button */
+ .menu-button {
+            position: fixed;
+            bottom: 10px;
+            right: 15px;
+            background-color: yellow;
+            border: none;
+            padding: 15px;
+            font-size: 16px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
 
+        /* Popup Menu */
+        .popup-menu {
+            position: fixed;
+            bottom: 60px;
+            right: 15px;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .popup-menu button {
+            padding: 10px;
+            background-color: yellow;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px;
+            font-size: 16px;
+        }
         /* Main Container */
         .quiz-container{
             background: var(--container-bg);
@@ -258,42 +288,26 @@
     <audio id="wrong-sound">
         <source src="wrong.mp3" type="audio/mpeg">
     </audio>
-    
+    <!-- Floating Menu Button -->
+    <button class="menu-button" onclick="toggleMenu()">☰</button>
+
+    <!-- Popup Menu (Hidden by Default) -->
+    <div class="popup-menu" id="popupMenu">
+        <button onclick="goHome()">🏠 Home</button>
+        <button id="musicToggle" onclick="toggleMusic()">🎵 Toggle Music</button>
+    </div>
     <script>
+           function toggleMenu() {
+            let menu = document.getElementById("popupMenu");
+            menu.style.display = (menu.style.display === "flex") ? "none" : "flex";
+        }
         document.addEventListener("DOMContentLoaded", function () {
     let bgMusic = document.getElementById("bg-music");
 
     // Ensure autoplay works across all browsers
     bgMusic.volume = 0.5; // Adjust volume (0.0 to 1.0)
-
-    // Create the Home button
-let homeButton = document.createElement("button");
-homeButton.innerText = "🏠 Home";
-homeButton.style.position = "fixed";
-homeButton.style.bottom = "55px";
-homeButton.style.right = "15px"; // Placed beside Toggle Music
-homeButton.style.padding = "10px";
-homeButton.style.background = "yellow";
-homeButton.style.border = "none";
-homeButton.style.cursor = "pointer";
-homeButton.onclick = goHome; // Ensure function exists
-
-document.body.appendChild(homeButton);
-    // Add a play/pause button if needed
-    let musicToggle = document.createElement("button");
-    musicToggle.innerText = "🎵 Toggle Music";
-    musicToggle.style.position = "fixed";
-    musicToggle.style.bottom = "5px";
-    musicToggle.style.right = "10px";
-    musicToggle.style.padding = "10px";
-    musicToggle.style.background = "yellow";
-    musicToggle.style.border = "none";
-    musicToggle.style.cursor = "pointer";
-    
-    document.body.appendChild(musicToggle);
-
-
-    musicToggle.addEventListener("click", function () {
+// Function to toggle music
+function toggleMusic() {
         if (bgMusic.paused) {
             bgMusic.play();
             musicToggle.innerText = "⏸ Pause Music";
@@ -301,7 +315,10 @@ document.body.appendChild(homeButton);
             bgMusic.pause();
             musicToggle.innerText = "▶️ Play Music";
         }
-    });
+    }
+
+    // Attach the function to the button click event
+    musicToggle.addEventListener("click", toggleMusic);
 });
     </script>
    
