@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindMaze App</title>
+    <style>
+        /* Responsive Design - Mobile First */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+        padding: 15px;
+    }
+
+    h1, h2 {
+        font-size: 1rem;
+    }
+
+    button {
+        font-size: 1rem;
+        padding: 10px;
+    }
+}
+/* Smaller Phones */
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        width: 100%;
+        padding: 10px;
+    }
+
+    h1, h2 {
+        font-size: 0.9rem;
+    }
+
+    button {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+}
+
+
+/* Adjustments for Mobile */
+@media (max-width: 768px) {
+    .story-container {
+        position: fixed; /* Ensures it's above everything */
+        width: 90%;
+        max-height: 60vh; /* Limits height */
+        overflow-y: auto; /* Enables scrolling */
+        top: 15%; /* Positions it higher */
+        left: 50%;
+        transform: translate(-50%, 0);
+    }
+}
+
+      :root {
+            --primary-color: #ff6f61; /* Fun coral color */
+            --primary-hover: #ff3b2f;
+            --text-color: #333;
+            --secondary-text-color: #555;
+            --background-color: #fffae5;
+            --container-bg: white;
+            --border-radius: 15px;
+            --shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Fun Animated Background */
+        body {
+            font-family: 'Comic Sans MS', 'Poppins', sans-serif;
+            text-align: center;
+            height: 100vh;
+            background: url(bg.gif) no-repeat center center fixed;
+            overflow: hidden;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        /* Main Container */
+        .quiz-container{
+            background: var(--container-bg);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin: 20px auto;
+            max-width: 500px;
+            border: 5px solid #ff6f61;
+            animation: popIn 1s ease-out;
+        }
+       
+        /* Fun Title Animation */
+        h1 {
+            font-size: 32px;
+            color: #ff6f61;
+            text-shadow: 3px 3px #FFD700;
+            animation: bounce 1.5s infinite;
+        }
+
+        /* Input Field */
+        input[type="text"] {
+            font-size: 20px;
+            padding: 10px;
+            border: 3px solid #ff6f61;
+            border-radius: 12px;
+            width: 80%;
+            outline: none;
+            text-align: center;
+            background-color: #fff4e6;
+        }
+
+        /* Buttons */
+        button {
+            background-color: #FFD700;
+            color: #333;
+            font-size: 20px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease-in-out, background 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #ff6f61;
+            transform: scale(1.1);
+            color: white;
+        }
+
+        /* Options Styling */
+        .options button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            font-size: 18px;
+            border: 3px solid #ff6f61;
+            border-radius: 12px;
+            background-color: #fce4ec;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .options button:hover {
+            background-color: #ffbb99;
+            transform: scale(1.05);
+        }
+
+        .options button.correct {
+            background-color: #4CAF50 !important;
+            color: white;
+        }
+
+        .options button.wrong {
+            background-color: #FF4C4C !important;
+            color: white;
+        }
+
+        /* Fun Animations */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Category Page */
+        #category-page button {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 3px solid #ff6f61;
+            border-radius: 12px;
+            background: var(--primary-color);
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        #category-page button:hover {
+            background: var(--primary-hover);
+        }
+
+       /* Mechanics & Story Containers */
+    .mechanics-container {
+        text-align: center;
+        padding: 20px;
+        background: var(--container-bg);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        width: 90%; /* Adjusted width for responsiveness */
+        max-width: 600px; /* Increased max width */
+        border: 4px dashed #ff6f61;
+        margin: 20px auto;
+        animation: popIn 1s ease-out;
+        }
+
+    /* Mechanics & Story Titles */
+    .mechanics-title, .story-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: var(--text-color);
+        margin-bottom: 15px;
+        text-shadow: 2px 2px #FFD700;
+        animation: bounce 1.5s infinite;
+    }
+
+    /* Mechanics & Story Text */
+    .mechanics-text, .story-text {
+        font-size: 16px;
+        color: var(--secondary-text-color);
+        line-height: 1.6;
+        margin-bottom: 20px;
+        white-space: pre-line;
+        background-color: #fffae5;
+        padding: 15px;
+        border-radius: 10px;
+        border: 2px solid #ff6f61;
+    }
+    </style>
+</head>
+<body>
+    <!--Audios-->
+    <audio id="bg-music" loop autoplay>
+        <source src="bgmusic.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    <audio id="correct-sound">
+        <source src="correct.mp3" type="audio/mpeg">
+    </audio>
+    
+    <audio id="wrong-sound">
+        <source src="wrong.mp3" type="audio/mpeg">
+    </audio>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+    let bgMusic = document.getElementById("bg-music");
+
+    // Ensure autoplay works across all browsers
+    bgMusic.volume = 0.5; // Adjust volume (0.0 to 1.0)
+
+    // Add a play/pause button if needed
+    let musicToggle = document.createElement("button");
+    musicToggle.innerText = "🎵 Toggle Music";
+    musicToggle.style.position = "fixed";
+    musicToggle.style.bottom = "10px";
+    musicToggle.style.right = "10px";
+    musicToggle.style.padding = "10px";
+    musicToggle.style.background = "yellow";
+    musicToggle.style.border = "none";
+    musicToggle.style.cursor = "pointer";
+    
+    document.body.appendChild(musicToggle);
+
+    musicToggle.addEventListener("click", function () {
+        if (bgMusic.paused) {
+            bgMusic.play();
+            musicToggle.innerText = "⏸ Pause Music";
+        } else {
+            bgMusic.pause();
+            musicToggle.innerText = "▶️ Play Music";
+        }
+    });
+});
+    </script>
+    <div id="player-name-page" class="quiz-container">
+        <h1>Enter Your Name</h1>
+        <input type="text" id="player-name" placeholder="Your name">
+        <button onclick="goToCategory()">Start</button>
+    </div>
+
+    <div id="category-page" class="quiz-container" style="display: none;">
+        <h2>Select Your Difficulty</h2>
+        <button onclick="startGame('easy')">Easy</button>
+        <button onclick="startGame('medium')">Medium</button>
+        <button onclick="startGame('hard')">Hard</button>
+    </div>
+
+    <div id="mechanics-page" class="quiz-container" style="display: none; text-align: left;">
+        <h2 id="mechanics-title" class="mechanics-title" style="text-align: center;"></h2>
+        <p id="mechanics-text" class="mechanics-text"></p>
+        <button class="next-btn" onclick="showStory()">Next</button>
+    </div>
+<!--Easy-->
+    <div id="story-page" class="story-container" style="display: none;">
+        <h2 class="story-title">The Lost Puppy</h2>
+        <p class="story-text">
+            One sunny afternoon, Lily was playing in her backyard when she heard a soft whimper. 
+            She looked around and saw a small, brown puppy stuck in the bushes. The puppy was wagging its tail, 
+            but it seemed lost and scared. Lily carefully approached the puppy and gently said, 
+            "Don't worry, little one. I'll help you." She reached out and picked up the puppy, 
+            who licked her face in thanks.
+
+            Lily decided to take the puppy to her house. She walked around the neighborhood 
+            asking people if they knew where the puppy lived, but no one recognized it. She then 
+            decided to take the puppy to the animal shelter, hoping they could find its owner. 
+            At the shelter, the workers were kind and promised to take care of the puppy. They put up a sign that said, 
+            “Found: Brown Puppy. Call this number if it’s yours.” Lily left her name and number with the shelter, just in case.
+
+            A few days later, Lily received a call. The puppy’s owner had seen the sign and called the shelter. 
+            The owner was so happy to be reunited with their puppy. Lily felt proud of helping the puppy 
+            and smiled as she watched it run happily back to its home.
+        </p>
+        <button class="start-quiz-btn" onclick="startQuiz('easy')">Start Quiz</button>
+    </div>
+
+    <div id="story-page1" class="story-container" style="display: none;">
+        <h2 class="story-title">The Talking Cat</h2>
+        <p class="story-text">
+            One rainy afternoon, Oscar was sitting by the window, looking out at the falling rain. He was bored because he couldn’t go outside to play. Suddenly, he heard a soft meow coming from behind him. When he turned around, he saw his cat, Whiskers, sitting on the couch.
+            “Did you just meow, Whiskers?” Oscar asked, surprised.
+            Whiskers blinked and then spoke, “Yes, I did!”
+            Oscar gasped. “You can talk?”
+            “Yes, I can,” Whiskers replied, with a grin. “But only you can hear me. I have a secret.”
+            Oscar was amazed. “What’s the secret?” he asked eagerly.
+            “I was once a magical cat who could talk to humans,” Whiskers explained. “But I lost my magic when I helped someone. Now, I need your help to find it again.”
+            Oscar agreed to help Whiskers. The cat led him to the garden, where they found a glowing stone hidden under a bush.
+            “This stone is part of my magic,” Whiskers said. “If you place it on the old oak tree, I will get my magic back!”
+            Oscar carefully placed the stone on the oak tree, and with a bright flash, Whiskers became a talking cat again, full of magic.
+            “Thank you, Oscar!” Whiskers purred happily.
+            Oscar smiled. “You’re welcome, Whiskers. I’m glad I could help.”
+        </p>
+        <button class="start-quiz-btn" onclick="startQuiz('easy')">Start Quiz</button>
+    </div>
+
+    <!-- Medium Story 1 -->
+<div id="story-page2" class="story-container" style="display: none;">
+    <h2 class="story-title">The Mystery of the Missing Lunchbox</h2>
+    <p class="story-text">
+        Sandra was excited for lunch. Her mom had packed her favorite meal—a peanut butter and jelly sandwich, apple slices, and a chocolate chip cookie. She placed her lunchbox on her desk before heading to the library with her best friend, Jake.
+        When she returned, her lunchbox was gone! She looked under her desk, inside her backpack, and even asked her classmates, but no one had seen it.
+        Jake decided to help. "Let's be detectives!" he said. They checked near the trash can, the teacher’s desk, and the playground. Suddenly, they saw Max, their classmate, sitting under a tree, eating a peanut butter and jelly sandwich.
+        "Max, where did you get that sandwich?" Sandra asked.
+        Max looked surprised. "I found a lunchbox on the bench near the swings. I didn’t know whose it was, so I took the food. I was really hungry."
+        Sandra smiled. "That’s my lunchbox! Next time, if you find something that isn’t yours, you should return it."
+        Max felt bad. "I'm sorry, Sandra. I should have asked first. Here’s your lunchbox back."
+        "That's okay," Sandra said. "Let's share the cookie!"
+        The three friends sat together, laughing and enjoying their lunch.
+    </p>
+    <button class="start-quiz-btn" onclick="startQuiz('medium')">Start Quiz</button>
+</div>
+
+<!-- Medium Story 2 -->
+<div id="story-page3" class="story-container" style="display: none; width: 650px; padding: 15px;">
+    <h2 class="story-title">The Lost Toy</h2>
+    <p class="story-text">
+        Tommy had a favorite toy car. It was small, shiny, and fast. He took it everywhere—home, school, and even to the park. One afternoon, Tommy was playing with the toy car at the park when he accidentally dropped it near the playground.
+        He didn’t notice at first, but later, when he was leaving, he couldn’t find the toy. Panic set in as he searched everywhere.
+        “Mom! I can’t find my toy!” Tommy cried.
+        His mom smiled gently. “Let’s retrace your steps and look for it together.”
+        After searching for a while, they still couldn’t find the toy. Tommy started to get upset.
+        Just then, a little boy approached him. “Are you looking for a toy car?” the boy asked, holding up Tommy’s shiny toy.
+        Tommy was surprised. “Yes! That’s mine! Thank you for finding it!”
+        The boy smiled and handed the toy to Tommy. “I saw it on the ground and thought someone might be looking for it.”
+        Tommy felt relieved and happy. “I’m so glad you found it!”
+        “Don’t forget to keep it safe next time!” the boy said with a grin.
+        Tommy thanked the boy and promised to be more careful in the future.
+    </p>
+    <button class="start-quiz-btn" onclick="startQuiz('medium')">Start Quiz</button>
+</div>
+
+    <!-- Hard Story 1 -->
+    <div id="story-page4" class="story-container" style="display: none; width: 650px; padding: 15px;">
+        <h2 class="story-title">The Echoing Steps</h2>
+        <p class="story-text">
+            In a quiet village, a narrow path wound through the woods, leading to an ancient stone bridge. Legend had it that anyone who crossed the bridge would hear the echoes of their future.
+            Curious, a girl named Lila ventured to the bridge one misty morning. As she stepped onto the stones, she heard faint whispers—fragments of laughter, cries of joy, and hints of sorrow. Each echo painted a picture of what could be.
+            Intrigued but overwhelmed, Lila paused. Should she follow the echoes or forge her own path? Remembering her grandmother’s advice—“Your future is yours to create”—she took a deep breath and stepped off the bridge.
+            With newfound determination, Lila returned to her village, ready to shape her destiny with each choice she made, knowing that while echoes could guide her, they would never define her.
+        </p>
+        <button class="start-quiz-btn" onclick="startQuiz('hard')">Start Quiz</button>
+    </div>
+    
+    <!-- Hard Story 2 -->
+    <div id="story-page5" class="story-container" style="display: none; width: 650px; padding: 15px;">
+        <h2 class="story-title">The Mysterious Footprints</h2>
+        <p class="story-text">
+            One morning, Milby and her younger brother, Sam, went outside to play after a rainy night. As they walked through the muddy backyard, they noticed strange footprints leading from the fence to the big oak tree.  
+            "Who could have left these footprints?" Sam wondered.  
+            Milby examined them closely. "They look too small to be Dad’s and too big to be a bird’s," she said.  
+            They followed the footprints and found a pile of acorns near the tree. Just then, a squirrel jumped down from a branch, grabbed an acorn, and scurried away.  
+            Sam laughed. "Mystery solved! The squirrel left the footprints while collecting food!"  
+            Milby smiled. "Nature always has little surprises waiting for us!"  
+        </p>
+        <button class="start-quiz-btn" onclick="startQuiz('hard')">Start Quiz</button>
+    </div>
+
+    <div id="quiz-section" class="quiz-container" style="display: none;">
+        <div class="header">
+            <h3>Quiz Application</h3>
+            <div class="time-box">Time Left <b id="timer">30</b></div>
+        </div>
+        <div class="question" id="question-text"></div>
+        <div class="options" id="options-container"></div>
+        <div class="score-box">Score: <span id="score">0</span></div>
+        <div class="footer">
+            <span id="question-counter"></span>
+            <button class="next-btn" onclick="nextQuestion()">Next</button>
+        </div>
+    </div>
+
+    <script>
+        let timeLeft = 30;
+        let score = 0;
+        let questionIndex = 0;
+        let selectedDifficulty = '';
+        let timer;
+        let storyIndex = 0; // Tracks which story is being displayed
+
+        
+        const timerElement = document.getElementById('timer');
+        const scoreElement = document.getElementById('score');
+        const questionCounterElement = document.getElementById('question-counter');
+        const questionTextElement = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+
+        function goToCategory() {
+            document.getElementById("player-name-page").style.display = "none";
+            document.getElementById("category-page").style.display = "block";
+        }
+
+        function startGame(difficulty) {
+            selectedDifficulty = difficulty;
+            document.getElementById("category-page").style.display = "none";
+            document.getElementById("mechanics-page").style.display = "block";
+            
+            const mechanics = {
+                easy: {
+                    title: "EASY MECHANICS",
+                    text: `✨ How to Play? ✨\r\n1️⃣ Read the story carefully. 📚👀\r\n2️⃣ Answer questions about the story! ❓🤔\r\n3️⃣ Select the best answer. 🤔📝\r\n4️⃣ Each correct answer earns you points! 🌟\n🎉 Good luck, young reader! Keep going and have fun! 📖💡`
+                },
+                medium: {
+                    title: "MEDIUM MECHANICS",
+                    text: `✨ How to Play? ✨\n1️⃣ Read the story carefully. 📚👀\n2️⃣ Answer questions about the story! ❓🤔\n3️⃣ Select the best answer. 🤔📝\n4️⃣ Each correct answer earns you points! 🌟\n🎉 Good luck, young reader! Keep going and have fun! 📖💡`
+                },
+                hard: {
+                    title: "HARD MECHANICS",
+                    text: `✨ How to Play? ✨\n1️⃣ Read the given story on the screen! 📚👀\n2️⃣ Answer the questions about the story. ❓🤔\n3️⃣ Tap your answer—every choice is correct, but one is the best! 🎯✨\n4️⃣ Earn points based on your answer:\n🏆 Best answer – 5 points! 🎉🔥\n🥈 Second best – 3 points! ✨👍\n🥉 Third best – 2 points! 💡👏\n🎊 Think carefully, score high, and have fun! 🚀📖`
+                }
+            };
+
+            const selectedMechanics = mechanics[difficulty];
+            document.getElementById("mechanics-title").textContent = selectedMechanics.title;
+            document.getElementById("mechanics-text").textContent = selectedMechanics.text;
+        }
+
+        const stories = { easy:["story-page", "story-page1"],
+        medium:["story-page2","story-page3"],
+        hard: ["story-page4","story-page5"]}; 
+        const questionsList = {  
+    easy: {
+        story1: [ // The Lost Puppy Questions
+            { question: "What did Lily find in her backyard?", options: ["A lost kitten", "A small brown puppy", "A bird", "A toy"], answer: 1 },
+            { question: "What did Lily do when she found the puppy?", options: ["She ignored it", "She took it to her house", "She left it outside", "She called for help"], answer: 1 },
+            { question: "Where did Lily take the puppy after asking around the neighborhood?", options: ["To her friend’s house", "To the animal shelter", "To the park", "To the store"], answer: 1 },
+            { question: "How did the owner find out about the puppy?", options: ["They saw Lily walking with the puppy", "They read the sign at the animal shelter", "They saw the puppy in the park", "They heard about it on the news"], answer: 1 },
+            { question: "Why did Lily decide to take the puppy to the animal shelter?", options: ["She couldn’t keep it at home", "She wanted to play with it", "She hoped the shelter could find the puppy’s owner", "She thought the puppy would be safer there"], answer: 2 }
+        ],
+        story2: [ // The Talking Cat Questions
+            { question: "What did Lily hear while sitting by the window?", options: ["The sound of the wind", "A dog barking", "A soft meow", "Music playing"], answer: 2 },
+            { question: "What was Whiskers’ secret?", options: ["Whiskers could fly", "Whiskers could talk to humans", "Whiskers was invisible", "Whiskers could sing"], answer: 1 },
+            { question: "How did Whiskers lose his magic?", options: ["He didn't take care of it", "He helped someone", "He used too much magic", "He forgot about it"], answer: 1 },
+            { question: "Where did Oscar have to place the glowing stone?", options: ["On the roof", "In the kitchen", "Under the bush", "On the oak tree"], answer: 3 },
+            { question: "How did Whiskers feel after getting his magic back?", options: ["Sad", "Angry", "Happy", "Scared"], answer: 3 }
+        ]
+    },
+    medium: {
+        story1: [ // The Mystery of the Missing Lunchbox
+            { question: "What was inside Sandra’s lunchbox?", options: ["Pizza and a banana", "A peanut butter and jelly sandwich, apple slices, and a chocolate chip cookie", "A turkey sandwich and grapes", "A salad and orange juice"], answer: 1 },
+            { question: "Where did Sandra go before she noticed her lunchbox was missing?", options: ["The cafeteria", "The library", "The playground", "The principal’s office"], answer: 1 },
+            { question: "Who helped Sandra solve the mystery?", options: ["Her teacher", "Her parents", "Jake", "The school janitor"], answer: 2 },
+            { question: "Where did Max find the lunchbox?", options: ["Near the swings", "Under the teacher’s desk", "In the cafeteria", "Inside the classroom"], answer: 0 },
+            { question: "What lesson did Max learn?", options: ["Always eat someone else's food", "Return things that don’t belong to you", "Hide lunchboxes in the playground", "Never eat peanut butter sandwiches"], answer: 1 }
+        ],
+        story2: [ // The Lost Toy
+            { question: "What was Tommy’s favorite toy?", options: ["A ball", "A toy car", "A puzzle", "A teddy bear"], answer: 1 },
+            { question: "Where did Tommy lose his toy?", options: ["At home", "In the classroom", "At the park", "At the store"], answer: 2 },
+            { question: "How did Tommy feel when he couldn’t find his toy?", options: ["Angry", "Confused", "Upset", "Excited"], answer: 2 },
+            { question: "Who found Tommy’s toy car?", options: ["Tommy’s mom", "His friend", "A little boy", "A park worker"], answer: 2 },
+            { question: "What lesson did Tommy learn?", options: ["Toys are not important", "It’s important to keep track of your belongings", "People should never ask for help", "It’s okay to lose things"], answer: 1 }
+        ]
+    },
+    hard: {
+        story1: [ // The Echoing steps
+            { question: "Where did Lila go to hear echoes of her future?", options: ["Big city", "Ancient stone bridge", "Quiet library", "Busy park"], answer: 1 },
+            { question: "What did Lila hear when she stepped onto the ancient stone bridge?", options: ["A loud voice telling her what to do", "Faint whispers—fragments of laughter, cries of joy, and hints of sorrow", "Complete silence", "The sound of animals in the woods"], answer: 1 },
+            { question: "What advice had Lila's grandmother given her that influenced her decision?", options: ["Always follow others' paths", "Your future is yours to create", "Never take risks in life", "Listen only to echoes"], answer: 2 },
+            { question: "Why was Lila both intrigued and overwhelmed by what she heard on the bridge?", options: ["Because it was too quiet", "Because it presented many different possibilities for her future", "Because she didn't understand anything", "Because it scared her"], answer: 0 },
+            { question: "What did Lila decide to do after hearing the echoes on the bridge?", options: [" She decided not to make any choices at all.","She took a deep breath and stepped off the bridge, ready to shape her own destiny with each choice she made.", "She stayed on the bridge forever.", "She went back home without making any decisions."], answer: 1 }
+            
+        ],
+        story2: [ // The Mysterious footprint
+            { question: "What did Milby and Sam find that made them curious?", options: ["A buried treasure", "A set of footprints", "A missing toy", "A bird’s nest"], answer: 1 },
+            { question: "Why did Milby think the footprints did not belong to her dad?", options: ["They were too big", "They were too small", "They were too wide", "They disappeared in the mud"], answer: 1 },
+            { question: "What helped Milby and Sam figure out the mystery?", options: ["They asked their dad", "They found a note", "They saw a squirrel taking an acorn", "They followed a map"], answer: 2 },
+            { question: "What lesson does the story teach about nature?", options: ["Animals leave clues behind", "Rain washes everything away", "Trees grow acorns overnight", "Footprints never disappear"], answer: 0 },
+            { question: "How did Sam react after solving the mystery?", options: ["Angry", "Confused", "Excited", "Bored"], answer: 2 }
+        ]
+    }
+};
+       
+function showStory() {
+    document.getElementById("mechanics-page").style.display = "none";
+
+    if (selectedDifficulty === "easy") {
+        document.getElementById("story-page").style.display = "block";  // Easy story
+    } else if (selectedDifficulty === "medium") {
+        document.getElementById("story-page2").style.display = "block"; // Medium story
+    } else if (selectedDifficulty === "hard") {
+        document.getElementById("story-page4").style.display = "block"; // Hard story (if added)
+    }
+}
+
+       
+function startQuiz(difficulty) {
+    if (!difficulty) {
+        console.error("Error: No difficulty selected!");
+        return;
+    }
+
+    selectedDifficulty = difficulty; // Set difficulty correctly
+    console.log("Selected Difficulty:", selectedDifficulty); // Debugging
+
+    if (!questionsList[selectedDifficulty]) {
+        console.error("Error: Difficulty not found in questionsList", selectedDifficulty);
+        return;
+    }
+
+    // Hide all story containers
+    const storyContainers = document.getElementsByClassName("story-container");
+    for (let i = 0; i < storyContainers.length; i++) {
+        storyContainers[i].style.display = "none";
+    }
+
+    // Show quiz section only
+    document.getElementById("quiz-section").style.display = "block";
+
+    // Reset quiz settings
+    questionIndex = 0; // Reset question index
+    timeLeft = 30; // Reset timer
+    document.getElementById("timer").innerText = timeLeft; // Display timer
+
+    startTimer();
+    loadQuestion(); // Load first question
+}
+
+
+
+     function loadQuestion() {
+    console.log("loadQuestion called"); // Debugging
+
+    if (!questionsList[selectedDifficulty]) {
+        console.error("Error: Difficulty not found:", selectedDifficulty);
+        return;
+    }
+
+    let currentQuestions = questionsList[selectedDifficulty][`story${storyIndex + 1}`];
+
+    if (!currentQuestions) {
+        console.error(`Error: Story ${storyIndex + 1} not found in ${selectedDifficulty}`);
+        return;
+    }
+
+    if (questionIndex >= currentQuestions.length) {
+        console.warn("No more questions left!");
+        return;
+    }
+
+    let questionData = currentQuestions[questionIndex];
+
+    if (!questionData) {
+        console.error("Error: No question found at index", questionIndex);
+        return;
+    }
+
+    console.log("Current Question Data:", questionData); // Debugging
+
+    // Update UI
+    document.getElementById("question-text").innerText = questionData.question;
+    let optionsContainer = document.getElementById("options-container");
+    optionsContainer.innerHTML = ""; // Clear previous options
+
+    questionData.options.forEach((option, index) => {
+        let button = document.createElement("button");
+        button.innerText = option;
+        button.classList.add("option-button"); // Ensure your CSS styles this
+        button.onclick = () => checkAnswer(index, questionData.answer, button);
+        optionsContainer.appendChild(button);
+    });
+
+    document.getElementById("question-counter").innerText = `${questionIndex + 1} of ${currentQuestions.length} Questions`;
+}
+
+
+
+// Preload audio files
+const correctSound = new Audio("correct.mp3");
+const wrongSound = new Audio("wrong.mp3");
+
+function checkAnswer(selectedIndex, correctIndex, button) {
+    let options = document.querySelectorAll(".options button");
+
+    // Prevent multiple selections
+    if (button.disabled) return;
+
+    console.log(`checkAnswer triggered for question: ${document.querySelector(".question").innerText}`);
+
+    // Disable all options after selection
+    options.forEach(btn => btn.disabled = true);
+
+    let points = 0; // Default: No points for incorrect answers
+
+    if (typeof selectedDifficulty === "undefined") {
+        console.error("selectedDifficulty is not defined!");
+        return;
+    }
+
+    if (selectedDifficulty === "hard") {
+        let hardPointsMapping = {
+            "Where did Lila go to hear echoes of her future?": [2, 5, 3, 2],
+            "What did Lila hear when she stepped onto the ancient stone bridge?": [2, 5, 3, 2],
+            "What advice had Lila's grandmother given her that influenced her decision?": [3, 5, 2, 2],
+            "Why was Lila both intrigued and overwhelmed by what she heard on the bridge?": [3, 5, 2, 2],
+            "What did Lila decide to do after hearing the echoes on the bridge?": [2, 5, 2, 3],
+            "What did Milby and Sam find that made them curious?": [2, 5, 3, 2],
+            "Why did Milby think the footprints did not belong to her dad?": [3, 5, 2, 2],
+            "What helped Milby and Sam figure out the mystery?": [3, 2, 5, 2],
+            "What lesson does the story teach about nature?": [5, 3, 2, 2],
+            "How did Sam react after solving the mystery?": [2, 3, 5, 2]
+        };
+
+        let currentQuestionElement = document.querySelector(".question");
+        if (!currentQuestionElement) {
+            console.error("Question element not found!");
+            return;
+        }
+
+        let currentQuestionText = currentQuestionElement.innerText.trim();
+        if (hardPointsMapping[currentQuestionText]) {
+            points = hardPointsMapping[currentQuestionText][selectedIndex] || 0;
+        }
+    } else {
+        points = selectedIndex === correctIndex ? 1 : 0; // Easy & Medium: 1 point for correct, 0 for wrong
+    }
+
+    console.log(`Selected index: ${selectedIndex}, Correct index: ${correctIndex}, Points awarded: ${points}`);
+
+    // Apply styling for correct and wrong answers
+    if (selectedIndex === correctIndex) {
+        button.classList.add("correct");
+        correctSound.play();
+    } else {
+        button.classList.add("wrong");
+        options[correctIndex].classList.add("correct");
+        wrongSound.play();
+    }
+
+    score += points;
+    document.getElementById("score").innerText = score;
+
+    // Enable "Next" button after answering
+    document.querySelector(".next-btn").disabled = false;
+}
+
+
+        function disableOptions() {
+            document.querySelectorAll(".option").forEach(option => {
+                option.onclick = null;
+            });
+        }
+
+        function nextQuestion() {
+    let currentQuestions = questionsList[selectedDifficulty][`story${storyIndex + 1}`];
+
+    if (questionIndex < currentQuestions.length - 1) {
+        questionIndex++;
+        loadQuestion();
+    } else {
+        clearInterval(timer); // Stop the timer
+
+        if (storyIndex < stories[selectedDifficulty].length - 1) {
+            // Move to the next story
+            storyIndex++;
+            questionIndex = 0; // Reset question index for the new story
+            
+            document.getElementById("quiz-section").style.display = "none"; // Hide quiz
+            document.getElementById(stories[selectedDifficulty][storyIndex]).style.display = "block"; // Show new story
+
+            console.log("Now showing:", stories[selectedDifficulty][storyIndex]); // Debugging
+
+            // Add a delay before showing quiz again
+            setTimeout(() => {
+                document.getElementById(stories[selectedDifficulty][storyIndex]).style.display = "none";
+                document.getElementById("quiz-section").style.display = "block"; // Show quiz again
+                loadQuestion(); // Load first question of new story
+                startTimer(); // Restart timer
+            }, 1800000); // Show story for 30 minutes before returning to quiz
+        } else {
+            // If all stories are done, show final score & go home
+          endQuiz();
+        }
+    }
+
+    // Disable the "Next" button until the user selects an answer
+    const nextButton = document.querySelector(".next-btn");
+    if (nextButton) {
+        nextButton.disabled = true;
+    }
+}
+
+function goHome() {
+    storyIndex = 0;
+    questionIndex = 0;
+    score = 0;
+    selectedDifficulty = null; // Reset difficulty
+
+    clearInterval(timer); // Stop any running timer
+
+    // Hide all possible quiz-related sections
+    document.getElementById("quiz-section").style.display = "none";
+
+    // Hide all story pages (easy, medium, hard)
+    let allStories = document.querySelectorAll(".story-container");
+    allStories.forEach(story => story.style.display = "none");
+
+    // Show the category selection page again
+    location.reload();
+
+    // Reset "Next" button text and functionality
+    let nextBtn = document.querySelector(".next-btn");
+    if (nextBtn) {
+        nextBtn.innerText = "Next"; // Reset text
+        nextBtn.onclick = nextQuestion; // Reset function
+        nextBtn.disabled = true; // Disable until an answer is selected
+    }
+}
+
+function startTimer() {
+    clearInterval(timer); // Clear any existing timer
+    timer = setInterval(() => {
+        if (timeLeft > 0) {
+            timeLeft--;
+            document.getElementById("timer").innerText = timeLeft;
+        } else {
+            clearInterval(timer);
+            alert("Time's up! Game Over!");
+            location.reload();
+        }
+    }, 1000);
+}
+
+        function endQuiz() {
+    clearInterval(timer);
+    alert(`Quiz Over! Your Score: ${score}`);
+            location.reload();
+    }
+
+    </script>
+</body>
+</html>
