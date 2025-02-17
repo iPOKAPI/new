@@ -454,7 +454,6 @@ function toggleMusic() {
     <div id="quiz-section" class="quiz-container" style="display: none;">
         <div class="header">
             <h3>Quiz Application</h3>
-            <div class="time-box">Time Left <b id="timer">30</b></div>
         </div>
         <div class="question" id="question-text"></div>
         <div class="options" id="options-container"></div>
@@ -464,17 +463,14 @@ function toggleMusic() {
             <button class="next-btn" onclick="nextQuestion()">Next</button>
         </div>
     </div>
-
+    
     <script>
-        let timeLeft = 30;
         let score = 0;
         let questionIndex = 0;
         let selectedDifficulty = '';
-        let timer;
         let storyIndex = 0; // Tracks which story is being displayed
 
         
-        const timerElement = document.getElementById('timer');
         const scoreElement = document.getElementById('score');
         const questionCounterElement = document.getElementById('question-counter');
         const questionTextElement = document.getElementById('question-text');
@@ -578,14 +574,16 @@ function showStory() {
 }
 
        
+let totalScore = 0; // Keeps track of the cumulative score
+
 function startQuiz(difficulty) {
     if (!difficulty) {
         console.error("Error: No difficulty selected!");
         return;
     }
 
-    selectedDifficulty = difficulty; // Set difficulty correctly
-    console.log("Selected Difficulty:", selectedDifficulty); // Debugging
+    selectedDifficulty = difficulty;
+    console.log("Selected Difficulty:", selectedDifficulty);
 
     if (!questionsList[selectedDifficulty]) {
         console.error("Error: Difficulty not found in questionsList", selectedDifficulty);
@@ -601,13 +599,65 @@ function startQuiz(difficulty) {
     // Show quiz section only
     document.getElementById("quiz-section").style.display = "block";
 
-    // Reset quiz settings
-    questionIndex = 0; // Reset question index
-    timeLeft = 30; // Reset timer
-    document.getElementById("timer").innerText = timeLeft; // Display timer
+    questionIndex = 0;  
 
-    startTimer();
-    loadQuestion(); // Load first question
+    if (selectedDifficulty === "easy") {
+        document.getElementById("score").innerText = totalScore; // Show total score for Easy category
+    } else {
+        totalScore = 0; // Reset score for other categories
+        document.getElementById("score").innerText = totalScore;
+    }
+
+    loadQuestion();
+}
+
+function checkAnswer(selectedOption) {
+    let currentQuestions = questionsList[selectedDifficulty][`story${storyIndex + 1}`];
+    let correctAnswer = currentQuestions[questionIndex].answer;
+
+    if (selectedOption === correctAnswer) {
+        totalScore++; // Accumulate score for all Easy questions
+        document.getElementById("score").innerText = totalScore;
+    }
+
+    const nextButton = document.querySelector(".next-btn");
+    if (nextButton) {
+        nextButton.disabled = false;
+    }
+}
+
+function nextQuestion() {
+    let currentQuestions = questionsList[selectedDifficulty][`story${storyIndex + 1}`];
+
+    if (questionIndex < currentQuestions.length - 1) {
+        questionIndex++;
+        loadQuestion();
+    } else {
+        if (storyIndex < stories[selectedDifficulty].length - 1) {
+            // Move to the next story
+            storyIndex++;
+            questionIndex = 0;
+
+            document.getElementById("quiz-section").style.display = "none";
+            document.getElementById(stories[selectedDifficulty][storyIndex]).style.display = "block";
+
+            console.log("Now showing:", stories[selectedDifficulty][storyIndex]);
+
+            // Add a delay before showing quiz again
+            setTimeout(() => {
+                document.getElementById(stories[selectedDifficulty][storyIndex]).style.display = "none";
+                document.getElementById("quiz-section").style.display = "block";
+                loadQuestion();
+            }, 1800000);
+        } else {
+            endQuiz();
+        }
+    }
+
+    const nextButton = document.querySelector(".next-btn");
+    if (nextButton) {
+        nextButton.disabled = true;
+    }
 }
 
 
@@ -742,7 +792,6 @@ function checkAnswer(selectedIndex, correctIndex, button) {
         questionIndex++;
         loadQuestion();
     } else {
-        clearInterval(timer); // Stop the timer
 
         if (storyIndex < stories[selectedDifficulty].length - 1) {
             // Move to the next story
@@ -759,7 +808,6 @@ function checkAnswer(selectedIndex, correctIndex, button) {
                 document.getElementById(stories[selectedDifficulty][storyIndex]).style.display = "none";
                 document.getElementById("quiz-section").style.display = "block"; // Show quiz again
                 loadQuestion(); // Load first question of new story
-                startTimer(); // Restart timer
             }, 1800000); // Show story for 30 minutes before returning to quiz
         } else {
             // If all stories are done, show final score & go home
@@ -780,7 +828,6 @@ function goHome() {
     score = 0;
     selectedDifficulty = null; // Reset difficulty
 
-    clearInterval(timer); // Stop any running timer
 
     // Hide all possible quiz-related sections
     document.getElementById("quiz-section").style.display = "none";
@@ -801,22 +848,9 @@ function goHome() {
     }
 }
 
-function startTimer() {
-    clearInterval(timer); // Clear any existing timer
-    timer = setInterval(() => {
-        if (timeLeft > 0) {
-            timeLeft--;
-            document.getElementById("timer").innerText = timeLeft;
-        } else {
-            clearInterval(timer);
-            alert("Time's up! Game Over!");
-            location.reload();
-        }
-    }, 1000);
-}
+
 
         function endQuiz() {
-    clearInterval(timer);
     alert(`Quiz Over! Your Score: ${score}`);
             location.reload();
     }
